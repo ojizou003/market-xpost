@@ -31,11 +31,14 @@ browser.implicitly_wait(10)
 for cookie in cookies:
     browser.add_cookie(cookie)
 browser.get(X_url)
+
 # ポストの作成
-post = f'【お昼の経済指標速報】\n\n日経平均：{nikkei}\nNYダウ：{dow}\nドル/円：{kawase}\n\n#株価 #為替'
+post = f'【お昼の経済指標速報】\n\n日経平均：{nikkei}\nNYダウ：{dow}\nドル/円：{kawase}'
+
 # ポストの入力
 browser.find_element(By.CLASS_NAME, 'public-DraftStyleDefault-block.public-DraftStyleDefault-ltr').send_keys(post)
-sleep(5)
+sleep(10)
+
 # ポストの投稿
 browser.find_element(By.CSS_SELECTOR, 'button.css-175oi2r.r-sdzlij.r-1phboty.r-rs99b7.r-lrvibr.r-1cwvpvk.r-2yi16.r-1qi8awa.r-3pj75a.r-1loqt21.r-o7ynqc.r-6416eg.r-1ny4l3l').click()
 sleep(5)
