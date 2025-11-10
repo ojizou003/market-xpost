@@ -21,20 +21,21 @@ RUN apt-get update && apt-get install -y \
     --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
-# Google Chromeリポジトリを追加（最新の方法）
+# Google Chromeリポジトリを追加（安定バージョン）
 RUN wget -q -O /tmp/google-chrome-stable.deb "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb" && \
     apt-get update && \
     apt-get install -y /tmp/google-chrome-stable.deb && \
     rm /tmp/google-chrome-stable.deb && \
     rm -rf /var/lib/apt/lists/*
 
-# ChromeDriverをインストール（安定した方法）
-RUN LATEST_VERSION=$(curl -s "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_stable") && \
-    wget -O /tmp/chromedriver.zip "https://storage.googleapis.com/chrome-for-testing-public/${LATEST_VERSION}/linux64/chromedriver-linux64.zip" && \
+# ChromeDriverをインストール（Chromeバージョンに合わせる）
+RUN CHROME_VERSION=$(google-chrome --version | cut -d " " -f3 | sed 's/\.[0-9]*$//') && \
+    CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION}") && \
+    wget -O /tmp/chromedriver.zip "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip" && \
     unzip /tmp/chromedriver.zip -d /tmp/ && \
-    mv /tmp/chromedriver-linux64/chromedriver /usr/local/bin/ && \
+    mv /tmp/chromedriver /usr/local/bin/ && \
     chmod +x /usr/local/bin/chromedriver && \
-    rm -rf /tmp/chromedriver.zip /tmp/chromedriver-linux64
+    rm -rf /tmp/chromedriver.zip
 
 # Python依存関係をコピーしてインストール
 COPY requirements.txt .
