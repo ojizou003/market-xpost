@@ -1,5 +1,6 @@
 # x-market.py
 
+import os
 from time import sleep
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -12,6 +13,11 @@ X_url = 'https://x.com'
 
 options = Options()
 options.add_argument("--headless")
+# GitHub Actions環境で必要なオプション
+if os.getenv("CI"):
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
 
 # 野村證券からマーケット情報を取得
 browser = webdriver.Chrome(options=options)
