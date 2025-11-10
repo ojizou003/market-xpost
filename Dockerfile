@@ -17,25 +17,22 @@ RUN apt-get update && apt-get install -y \
     unzip \
     curl \
     ca-certificates \
+    python3 \
     --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
-# Google Chromeリポジトリを追加
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list
-
-# Google Chromeをインストール
-RUN apt-get update && apt-get install -y \
-    google-chrome-stable \
-    --no-install-recommends && \
+# Google Chromeリポジトリを追加（最新の方法）
+RUN wget -q -O /tmp/google-chrome-stable.deb "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb" && \
+    apt-get update && \
+    apt-get install -y /tmp/google-chrome-stable.deb && \
+    rm /tmp/google-chrome-stable.deb && \
     rm -rf /var/lib/apt/lists/*
 
-# ChromeDriverをインストール（最新の方法）
-RUN CHROME_VERSION=$(google-chrome --version | cut -d " " -f3 | cut -d "." -f1) && \
-    CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION}") && \
+# ChromeDriverをインストール（最新の安定版）
+RUN CHROMEDRIVER_VERSION=$(curl -s "https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json" | \
+    python3 -c "import sys, json; data=json.load(sys.stdin); print(data['channels']['Stable']['version'])") && \
     wget -O /tmp/chromedriver.zip "https://storage.googleapis.com/chrome-for-testing-public/${CHROMEDRIVER_VERSION}/linux64/chromedriver-linux64.zip" && \
     unzip /tmp/chromedriver.zip chromedriver-linux64/chromedriver -d /usr/local/bin/ && \
-    mv /usr/local/bin/chromedriver-linux64/chromedriver /usr/local/bin/chromedriver && \
     chmod +x /usr/local/bin/chromedriver && \
     rm -rf /tmp/chromedriver.zip /usr/local/bin/chromedriver-linux64
 
