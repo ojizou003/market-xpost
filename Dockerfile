@@ -28,13 +28,13 @@ RUN wget -q -O /tmp/google-chrome-stable.deb "https://dl.google.com/linux/direct
     rm /tmp/google-chrome-stable.deb && \
     rm -rf /var/lib/apt/lists/*
 
-# ChromeDriverをインストール（最新の安定版）
-RUN CHROMEDRIVER_VERSION=$(curl -s "https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json" | \
-    python3 -c "import sys, json; data=json.load(sys.stdin); print(data['channels']['Stable']['version'])") && \
-    wget -O /tmp/chromedriver.zip "https://storage.googleapis.com/chrome-for-testing-public/${CHROMEDRIVER_VERSION}/linux64/chromedriver-linux64.zip" && \
-    unzip /tmp/chromedriver.zip chromedriver-linux64/chromedriver -d /usr/local/bin/ && \
+# ChromeDriverをインストール（安定した方法）
+RUN LATEST_VERSION=$(curl -s "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_stable") && \
+    wget -O /tmp/chromedriver.zip "https://storage.googleapis.com/chrome-for-testing-public/${LATEST_VERSION}/linux64/chromedriver-linux64.zip" && \
+    unzip /tmp/chromedriver.zip -d /tmp/ && \
+    mv /tmp/chromedriver-linux64/chromedriver /usr/local/bin/ && \
     chmod +x /usr/local/bin/chromedriver && \
-    rm -rf /tmp/chromedriver.zip /usr/local/bin/chromedriver-linux64
+    rm -rf /tmp/chromedriver.zip /tmp/chromedriver-linux64
 
 # Python依存関係をコピーしてインストール
 COPY requirements.txt .
