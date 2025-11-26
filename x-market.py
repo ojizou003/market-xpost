@@ -37,6 +37,7 @@ browser.implicitly_wait(10)
 for cookie in cookies:
     browser.add_cookie(cookie)
 browser.get(X_url)
+sleep(5)
 
 # ポストの作成
 post = f'【お昼の経済指標速報】\n\n日経平均：{nikkei}\nNYダウ：{dow}\nドル/円：{kawase}\n\n#株価 #為替  '
